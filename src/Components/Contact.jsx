@@ -55,7 +55,7 @@ const Contact = () => {
         <div className="card">
           <img src="https://img.icons8.com/ios-filled/100/6366f1/phone.png" />
           <h3>Call</h3>
-          <p>+974 3119 1887</p>
+          <p>+974 4005 2222</p>
         </div>
       </section>
 

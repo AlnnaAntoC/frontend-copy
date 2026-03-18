@@ -22,7 +22,8 @@ const Footer = () => {
           <p>Orbit Electronic & Telecommunication WLL</p>
           <p>The Commercial Avenue, Al Sayer 2, Bldg. 09</p>
           <p>Office No.C103, P.O Box 7994 Doha Qatar</p>
-          <p>Tel: +974 3119 1887 | Fax: +974 4005 2200</p>
+          <p>Mobile / WhatsApp: +974 3119 1887</p>
+          <p>  Fax: +974 4005 2200</p>
           <p>info@orbitqa.com  I   sales@orbitqa.com</p>
         </div>
 

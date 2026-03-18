@@ -6,8 +6,8 @@
   top: 30px;
   left: 0;
   right: 0;
-  height: 70px;
-  padding: 0 40px;
+  height: 80px;
+  padding: 0px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -253,10 +253,19 @@
 
 /* Ultra-small devices */
 @media (max-width: 480px) {
-  .navbar {
-    padding: 0 12px;
+  
+    .navbar {
+    top: 0px;            /* adjust if needed */
+    padding: 0 10px;      /* remove large vertical padding */
+    height: 60px;         /* consistent navbar height */
+  
   }
-
+  .logo-img {
+    height: 40px; /* smaller logo for mobile */
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
   .nav-links {
     width: 80%;
   }
