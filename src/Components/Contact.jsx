@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import "./Contact.css";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-console.log(import.meta.env.REACT_APP_API_URL);
+import { sendContactMessage } from "../api";
 
 const Contact = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -13,8 +13,8 @@ const Contact = () => {
     message: "",
   });
   const [honeypot, setHoneypot] = useState("");
-  const [formOpenTime] = useState(Date.now());
   const [status, setStatus] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const scrollToForm = () => {
     const formSection = document.getElementById("contact-form");
@@ -28,15 +28,18 @@ const Contact = () => {
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
-    if (honeypot) return;
-
-    const timeSpent = (Date.now() - formOpenTime) / 1000;
-    if (timeSpent < 3) return;
+    if (honeypot) {
+      setStatus("error");
+      setErrorMessage("Submission blocked.");
+      return;
+    }
 
     setStatus("sending");
+    setErrorMessage("");
 
     if (!executeRecaptcha) {
       setStatus("error");
+      setErrorMessage("reCAPTCHA is not ready yet. Please wait a moment.");
       return;
     }
 
@@ -46,22 +49,16 @@ const Contact = () => {
       
       
         
-        const res = await fetch("https://portfolio-backend-2-y4dg.onrender.com/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, captchaToken }),
-      });
+        await sendContactMessage({ ...formData, captchaToken });
 
-      if (res.ok) {
-        setStatus("success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-      } else {
-        setStatus("error");
-      }
+      setStatus("success");
+      setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
+      console.error(err);
+      setErrorMessage(err.message || "Unable to send your message. Please try again.");
       setStatus("error");
     }
-  }, [formData, honeypot, formOpenTime, executeRecaptcha]);
+  }, [formData, honeypot, executeRecaptcha]);
 
   return (
     <div className="contact-root">
@@ -114,12 +111,13 @@ const Contact = () => {
           <form className="form-box" onSubmit={handleSubmit}>
             <input
               type="text"
-              name="website"
+              name="hp_field"
               value={honeypot}
               onChange={(e) => setHoneypot(e.target.value)}
-              style={{ opacity: 0, position: "absolute", top: 0, left: 0, height: 0, width: 0, zIndex: -1 }}
+              style={{ position: "absolute", left: "-9999px", top: "-9999px" }}
               tabIndex="-1"
               autoComplete="off"
+              aria-hidden="true"
             />
             <div className="input-group">
               <input name="name" value={formData.name} onChange={handleChange} required placeholder=" " />
@@ -141,7 +139,7 @@ const Contact = () => {
               {status === "sending" ? "Sending..." : "Send Message"}
             </button>
             {status === "success" && <p style={{ color: "green", marginTop: "10px" }}>✅ Message sent successfully!</p>}
-            {status === "error" && <p style={{ color: "red", marginTop: "10px" }}>❌ Something went wrong. Please try again.</p>}
+            {status === "error" && <p style={{ color: "red", marginTop: "10px" }}>{errorMessage || "❌ Something went wrong. Please try again."}</p>}
           </form>
         </div>
       </section>

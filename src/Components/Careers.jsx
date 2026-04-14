@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Careers.css";
 import heroImage from "../assets/care.png";
-console.log(import.meta.env.REACT_APP_API_URL);
+import { uploadCareerResume } from "../api";
 
 const Careers = () => {
   const [file, setFile] = useState(null);
@@ -55,24 +55,13 @@ const Careers = () => {
     formData.append("resume", file);
 
     try {
-      
-      
-      const res = await fetch("https://portfolio-backend-2-y4dg.onrender.com/api/careers", {  
-        method: "POST",
-        body: formData,
-      });
-
-      if (res.ok) {
-        setStatus("success");
-        setFile(null);
-        document.getElementById("resumeUpload").value = "";
-      } else {
-        const data = await res.json();
-        setErrorMsg(data.error || "Something went wrong");
-        setStatus("error");
-      }
+      await uploadCareerResume(formData);
+      setStatus("success");
+      setFile(null);
+      document.getElementById("resumeUpload").value = "";
     } catch (err) {
-      setErrorMsg("Could not connect to server");
+      console.error(err);
+      setErrorMsg(err.message || "Could not connect to server");
       setStatus("error");
     }
   };
